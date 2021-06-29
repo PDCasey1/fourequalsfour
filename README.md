@@ -1,0 +1,2 @@
+# fourequalsfour
+When does six equal three, three equal five, five equal four, and four equal four? When len('six') == 3, len('three') == 5, len('five') == 4, and so on. Through this function, everything ultimately decomposes to len('four') == 4.  My question is, what spelled-out number is the greatest number of decompositions from len('four') == 4? Mathematically, is there a theoretical limit to the number of decompositions? I have no idea; I studied English literature in college. However, it's been a fun coding challenge and I'm looking forward to optimizing my code.
