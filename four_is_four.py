@@ -1,99 +1,99 @@
-from prefixes_suffixes import prefixes, suffixes
+from prefixes_and_suffixes import prefixes, suffixes
 
-def delim(x):
-    x = str(x)
-    
-    start_string = ''
-    delim_num_list = []
-    
-    while len(str(x))%3 != 0:
-        start_string += x[0]
-        x = x[1:]
-        
-    if len(start_string) > 0:
-        delim_num_list.append(int(start_string))
-        
-    for i in range(0, len(x), 3):
-        delim_num_list.append(int(x[i:i+3]))
-        
-    return(delim_num_list)
 
-def text_num(arr):
+# takes an integer and splits it into its decimal-separated groupings, e.g.'hundreds', 'thousands', 
+# 'million's, etc., and places each group into a list of strings used as input by the
+# numbers_spelled_out() function. Then creates a "written out" string of that number, concatenating
+# the number itself with its suffix (1001 > 'one thousand one'). 
 
-	string = ''
+def number_spelled_out(num):
+	if num == 0:
+		return('zero')
 
-	if len(arr) == 1:
-		string+=(prefixes[arr[0]])
-	else:
+	num = str(num)
+	arr = ['']
+	spelled_string = ''
 
-		for count, num in enumerate(arr):
-			if num != 0 and count+1 != len(arr):
-				string += prefixes[num]+suffixes[len(arr)-count-1]+' '
-			elif num != 0:
-				string += prefixes[num]+suffixes[len(arr)-count-1]
+	while len(num) %3 != 0:
+		arr[0] += num[0]
+		num = num[1:]
 
-	return(string.strip())
+	for i in range(0, len(num), 3):
+			arr.append(num[i:i+3])
 
-def num_count(string):
+	if arr[0]=='':
+		arr.remove('')
+
+	arr = [int(i) for i in arr]
+
+	for num, i in enumerate(arr):
+
+		if i == 0:
+			pass
+		elif i in prefixes:
+			spelled_string += prefixes[i]+suffixes[len(arr)-num-1]+' '
+		elif i not in prefixes:
+			spelled_string += prefixes[int(str(i)[0])]+' hundred '+prefixes[int(str(i)[1:3])]+suffixes[len(arr)-num-1]+' '
+		
+	return(spelled_string.strip())
+
+def letters_in_string(string):
 
 	count = 0
 	for i in string:
 		if i in 'abcdefghijklmnopqrstuvwxyz':
 			count += 1
 
-	return count
+	return(count)
+
 
 def decay_num(num):
-	i = 0
-	l = []
+	cycles = 0
 
 	while True:
-		if len(l) == 0:
-			l.append(num)
-			l.append(text_num(delim(num)))
-		
-		if num_count(text_num(delim(num))) == 4:
-			i += 1
-			l.append(i)
-			break
-		else:
-			i += 1
-			num = num_count(text_num(delim(num)))
+		if letters_in_string(number_spelled_out(num))!= 4:
+			cycles+=1
+			num = letters_in_string(number_spelled_out(num))
 
-	return(l)
+		else:
+			cycles+=1
+			break
+
+	return(num, cycles)
 
 def print_decay(num):
 
 	while True:
-		print((text_num(delim(num))+' equals '+str(num_count(text_num(delim(num))))))
-		if num_count(text_num(delim(num))) == 4:
+		print((number_spelled_out(num))+' equals '+str(letters_in_string(number_spelled_out(num))))
+
+		if letters_in_string(number_spelled_out(num)) == 4:
 			print('four equals 4\n')
 			break
 		else:
-			num = num_count(text_num(delim(num)))
+			num = letters_in_string(number_spelled_out(num))
 			
 
 def max_decay(x,y,z=1, pass_through=False):
 	
 	max_list=[]
 	max_num = 0
-	max_iter = 0
+	max_cycles = 0
 
 
 	for i in range(x,y,z):
-		if decay_num(i)[2] > max_iter:
+		if decay_num(i)[1] > max_cycles:
 			max_num = i
 			max_list.clear()
 			max_list.append(max_num)
-			max_iter = decay_num(i)[2]
-		elif decay_num(i)[2] == max_iter:
+			max_cycles = decay_num(i)[1]
+		elif decay_num(i)[1] == max_cycles:
 			max_list.append(i)
 
 	if pass_through == False:
 
-		print('Range:({} : {})\nMaximum iterations: {}\nOrigin: {}\n'.format(x, y, max_iter, max_num))
+		print('Range:({} : {})\nMaximum iterations: {}\nOrigin: {}\n'.format(x, y, max_cycles, max_num))
 		print_decay(max_num)
 		print()
 
 	else:
-		return  max_iter, max_list
+		return  max_cycles, max_list
