@@ -1,4 +1,5 @@
 from prefixes_and_suffixes import prefixes, suffixes
+import json
 
 
 # takes an integer and splits it into its decimal-separated groupings, e.g.'hundreds', 'thousands', 
@@ -97,3 +98,21 @@ def max_decay(x,y,z=1, pass_through=False):
 
 	else:
 		return  max_cycles, max_list
+	
+
+
+def prefix_lengths():
+	lengths = {}
+
+	for each in prefixes:
+		if len(prefixes[each]) not in lengths.values() and len(prefixes[each]) > 0:
+			lengths[each] = len(prefixes[each])
+		else:
+			pass
+	
+	with open("newfile.py", "w") as new_file:
+		new_file.write(json.dumps(lengths))
+
+	print(lengths)
+
+prefix_lengths()
